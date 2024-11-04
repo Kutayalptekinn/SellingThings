@@ -1,0 +1,204 @@
+.sectionwrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Sayfanın tamamını kaplar */
+    background-color: #f4f4f4; /* İsteğe bağlı arka plan rengi */
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 800px; /* Container genişliği */
+    padding: 20px;
+    background-color: #ffffff; /* Arka plan rengi */
+    border-radius: 8px; /* Kenarları yuvarlar */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Gölgelendirme */
+    margin: 40px 0; /* Yukarıdan ve aşağıdan margin */
+  }
+  
+  .container .orders {
+    max-height: 600px; /* Scroll yapılan alanın yüksekliği arttırıldı */
+    overflow-y: auto; /* Yalnızca dikey kaydırma */
+    padding-right: 10px; /* Kaydırma çubuğundan dolayı sağda biraz boşluk bırakır */
+  }
+  
+  /* İsteğe bağlı olarak scrollbar stilini değiştirebilirsiniz */
+  .container .orders::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .container .orders::-webkit-scrollbar-thumb {
+    background-color: #888; /* Kaydırma çubuğu rengi */
+    border-radius: 3px;
+  }
+  
+  .container .orders::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Kaydırma çubuğu üzerindeyken renk değişimi */
+  }
+  
+  .order-card {
+    display: flex;
+    justify-content: space-between; /* İçeriği sağa ve sola yaslar */
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .order-card .left-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .order-card img {
+    width: 64px; /* Fotoğraf boyutu */
+    height: 64px; /* Fotoğraf boyutu */
+    object-fit: cover;
+    margin-right: 10px;
+  }
+  
+  .order-card .order-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .order-card h2 {
+    font-size: 16px; /* Başlık yazı boyutu küçültüldü */
+    margin-bottom: 4px;
+  }
+  
+  .order-card p {
+    margin: 2px 0; /* Paragraf aralığı küçültüldü */
+  }
+  
+  .order-card .right-section {
+    text-align: right;
+  }
+  
+  .return-button {
+    margin-top: 4px;
+    padding: 4px 8px;
+    background-color: #ff6b6b; /* Buton rengi */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .right-section .title {
+    font-weight: bold; /* Sadece başlıklar kalın */
+  }
+  
+  .right-section p {
+    margin: 2px 0; /* Paragraf aralığı */
+  }
+  
+  .return-button:hover {
+    background-color: #ff4c4c; /* Hover durumu */
+  }
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Arkaplan karartması */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end; /* Butonları sağa yaslar */
+  }
+  
+  /* Ürün Bilgileri Stil */
+  .product-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .product-info img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+  
+  .product-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-details h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  .product-details p {
+    margin: 2px 0;
+    font-size: 14px;
+  }
+  
+  .confirm-button {
+    background-color: #4CAF50; /* İade Et butonu rengi */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .confirm-button:hover {
+    background-color: #45a049;
+  }
+  
+  .cancel-button {
+    background-color: #f44336; /* İptal Et butonu rengi */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px; /* İptal Et butonuna sağda biraz boşluk bırakır */
+  }
+  
+  .cancel-button:hover {
+    background-color: #da190b;
+  }

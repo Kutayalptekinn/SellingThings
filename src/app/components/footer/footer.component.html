@@ -1,0 +1,49 @@
+<div class='bg-secondary'>
+  <div class="relative flex flex-col md:flex-row items-center justify-center justify-around py-8">
+    <!-- Logo container -->
+    <div class='h-52 w-52 cursor-pointer mb-8 md:mb-0 md:ml-10'> 
+      <img src="../../../assets/footerlogo.png" alt='Logo' class='w-full mt-16 h-24 object-center rounded-full double-border' />
+    </div>
+    
+    <!-- Contact Info -->
+    <div id='contact_container' class='text-black mb-8 md:mb-0 mt-5'>
+      <div id='header' class='mb-5 pl-4 py-2 border-l-2 border-black'>
+        <h1 class='text-4xl'>İletişim Bilgileri</h1>
+      </div>
+      <div class='mb-3 flex items-center gap-x-2'>
+        <div class="fab fa-instagram"></div>
+        <p><a href="https://www.instagram.com/hypervactr/" target="_blank">İnstagram'dan ulaşın</a></p>
+      </div>
+      <div class='mb-3 flex items-center gap-x-2'>
+        <div class="fas fa-phone"></div>
+        <p>+90 545 213 68 73</p>
+      </div>
+      <div class='mb-3 flex items-center gap-x-2'>
+        <div class="fas fa-envelope"></div>
+        <p>hypervactr&#64;gmail.com</p>
+      </div>
+    </div>
+
+    <!-- Policies -->
+    <div id='contact_container' class='text-black'>
+      <div id='header' class='mb-5 pl-4 py-2 border-l-2 border-black mr-20'>
+        <h1 class='text-4xl'>Politikalar</h1>
+      </div>
+      <div class='mb-3 flex items-center gap-x-2'>
+        <p><a [routerLink]="['/iptal-iade']">İptal ve İade Şartları</a></p>
+      </div>
+      <div class='mb-3 flex items-center gap-x-2'>
+        <p><a [routerLink]="['/gizlilik']">Gizlilik Politikası</a></p>
+      </div>
+      <div class='mb-3 flex items-center gap-x-2'>
+        <p><a [routerLink]="['/hizmet-kosullari']">Hizmet Koşulları</a></p>
+      </div>
+      <div class='mb-3 flex items-center gap-x-2'>
+        <p><a [routerLink]="['/mesafeli-satis']">Mesafeli Satış Sözleşmesi</a></p>
+      </div>
+    </div>
+    
+
+  </div>
+  <img src="assets/iyzico.png" alt="Iyzico Logo" style="float: right;" width="32%" >
+</div>

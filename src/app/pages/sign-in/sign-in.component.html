@@ -1,0 +1,99 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+  <p-toast position="bottom-right" />
+  <div class="bg-white p-10 rounded-lg shadow-lg w-full max-w-lg">
+    <h2 class="text-3xl font-bold mb-8 text-gray-800 text-center">Kayıt Ol</h2>
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <div class="mb-6">
+        <label class="block text-gray-700 text-lg font-bold mb-2" for="name">
+          Ad 
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="name"
+          formControlName="name"
+          type="text"
+          placeholder="Ad"
+        />
+        <div *ngIf="registrationForm.get('name')?.invalid && registrationForm.get('name')?.touched">
+          <small class="text-red-600" *ngIf="registrationForm.get('name')?.errors?.['required']">Ad gereklidir.</small>
+        </div>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-lg font-bold mb-2" for="surname">
+         Soyad
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="surname"
+          formControlName="surname"
+          type="text"
+          placeholder="Soyad"
+        />
+        <div *ngIf="registrationForm.get('surname')?.invalid && registrationForm.get('surname')?.touched">
+          <small class="text-red-600" *ngIf="registrationForm.get('surname')?.errors?.['required']">Soyad gereklidir.</small>
+        </div>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-lg font-bold mb-2" for="email">
+          Email
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="email"
+          formControlName="email"
+          type="email"
+          placeholder="Email"
+        />
+        <div *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+          <small class="text-red-600" *ngIf="registrationForm.get('email')?.errors?.['required']">Email gereklidir.</small>
+          <small class="text-red-600" *ngIf="registrationForm.get('email')?.errors?.['email']">Geçerli bir email giriniz.</small>
+        </div>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-lg font-bold mb-2" for="password">
+          Şifre
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+          id="password"
+          formControlName="password"
+          type="password"
+          placeholder="************"
+        />
+        <div *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched">
+          <small class="text-red-600" *ngIf="registrationForm.get('password')?.errors?.['required']">Şifre gereklidir.</small>
+          <small class="text-red-600" *ngIf="registrationForm.get('password')?.errors?.['minlength']">Şifre en az 6 karakter olmalıdır.</small>
+        </div>
+      </div>
+      <div class="mb-8">
+        <label class="block text-gray-700 text-lg font-bold mb-2" for="confirm-password">
+          Şifreyi Onayla
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="confirm-password"
+          formControlName="confirmPassword"
+          type="password"
+          placeholder="************"
+        />
+        <div *ngIf="registrationForm.hasError('mismatch') && registrationForm.get('confirmPassword')?.touched">
+          <small class="text-red-600">Şifreler eşleşmiyor.</small>
+        </div>
+        <div *ngIf="registrationForm.get('confirmPassword')?.invalid && registrationForm.get('confirmPassword')?.touched">
+          <small class="text-red-600" *ngIf="registrationForm.get('confirmPassword')?.errors?.['required']">Şifre onayı gereklidir.</small>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-6">
+        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
+                type="submit" [disabled]="registrationForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Kayıt Ol</span>
+          <span *ngIf="isLoading">Kaydediliyor...</span>
+        </button>
+      </div>
+      <div class="text-center mt-6">
+        <a href="/login" class="text-gray-600 hover:text-gray-800">Giriş sayfasına dön</a>
+      </div>
+    </form>
+  </div>
+</div>

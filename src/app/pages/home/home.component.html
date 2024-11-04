@@ -1,0 +1,97 @@
+<div class="sectionwrapper">
+<!-- Image Section -->
+<!-- Image Section -->
+<section class="hero-image">
+  <div class="image-content flex items-center justify-center h-full w-full md:w-7/12 ml-auto mr-auto">
+    <img src="../../../assets/logo.png" alt="Hero Image" class="w-full md:w-7/12 object-cover">
+  </div>
+</section>
+
+<!-- Text Section -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center shadow-2-strong bg-slate-100 p-6 md:p-10">
+      <!-- Text Content -->
+      <div class="grid justify-items-center text-center mt-12 md:mt-20 col-span-2">
+        <div>
+          <p class="font-mono text-lg md:text-xl">En Yenilikçi Ürünlerimiz ile Karşınızdayız!</p>
+        </div>
+        <hr class="hr w-16 my-4" />
+        <div>
+          <p class="font-mono text-lg md:text-xl">Son Teknoloji Cihazlar ile Tanışın</p>
+        </div>
+        <hr class="hr w-16 my-4" />
+        <div>
+          <p class="font-sans hover:font-serif text-lg md:text-xl">İLK ÜRÜNLERDE %15 İNDİRİMİ KAÇIRMAYIN</p>
+        </div>
+        <hr class="hr w-16 my-4" />
+        <a class="btn btn-primary mt-6 px-6 py-3 text-white bg-blue-600 rounded-full" href="/product" role="button">Alışverişe Başla</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  
+  
+
+  <section class="video">
+    <div class='my-40 w-[80%] mx-auto h-[600px] bg-gray-200 rounded-xl flex items-center justify-center shadow-2-strong'>
+      <iframe
+        class='w-full h-full'
+        src='https://www.youtube.com/embed/I9CXiEvc8mo?si=lt_QIhBCtmMKi1bW'
+        title='YouTube video player'
+        frameborder='0'
+        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+        referrerpolicy='strict-origin-when-cross-origin'
+        allowfullscreen
+      ></iframe>
+    </div>
+  </section>
+
+  <section class="products">
+    <div class='w-full bg-light py-24 shadow-2-strong'>
+      <div class='text-black'>
+        <h1 style="color:black;" class='text-center text-5xl'>Ürünler</h1>
+        <div id='products_container' class='flex flex-col md:flex-row md:flex-wrap items-center gap-12 mt-20 px-4 mx-auto'>
+          <ng-container *ngIf="products && products.length">
+            <ng-container *ngFor="let product of products">
+              <a [routerLink]="['/product-detail', product.id]" class='block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 w-full max-w-lg mx-auto md:w-1/2 lg:w-1/3'>
+                <div class='h-[220px] bg-gray-200 overflow-hidden'>
+                  <img [src]='urlApi+"/"+product.photo1' alt="Product Image" class='w-full h-full object-cover'/>
+                </div>
+                <div class='p-4'>
+                  <h3 class='text-center text-xl font-semibold'>{{ product.name }}</h3>
+                  <p class='text-center text-lg mt-2'>{{ formatPrice(product.price) }} TL</p>
+                  <div class='flex justify-center mt-2'>
+                    <button class='bg-primary text-white py-2 px-4 rounded-full'>Sepete Ekle</button>
+                  </div>
+                  <div class="flex items-center mt-4 justify-center align-center">
+                    <span class="text-gray-600 mr-1 text-lg">{{ product?.rating }}</span>
+                    <div class="flex items-center">
+                      <!-- Dinamik Yıldızlar -->
+                      <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                        <div class="star-container">
+                          <i class="fas fa-star star text-gray-300"></i>
+                          <i class="fas fa-star star-filled"
+                             [ngStyle]="{'width': getStarFillPercentage(product.rating, star)}"></i>
+                        </div>
+                      </ng-container>
+                      <span class="text-gray-600 ml-2 text-lg">({{ product?.comments.length }} yorum)</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      
+      <div class='flex justify-center mt-10'>
+        <a class='bg-white text-primary py-2 px-6 rounded-full border-2 border-primary font-bold' href="/product">
+          Satın Al
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

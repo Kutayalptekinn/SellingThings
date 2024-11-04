@@ -1,0 +1,52 @@
+<div class="sectionwrapper">
+  
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-center">Siparişlerim</h1>
+    <div class="orders">
+      <div *ngFor="let order of orders" class="order-card">
+        <div class="left-section">
+          <img [src]="'https://sellingthingsapi.shop/' + order.product.photo1" alt="Product Image">
+          <div class="order-info">
+            <h2>Sipariş #{{ order.id }}</h2>
+            <button *ngIf="order.status !== 'İade Sürecinde'" class="return-button" (click)="openModal(order.id)">
+              Sipariş İade Talebi Oluştur
+            </button>          
+          </div>
+        </div>
+        <div class="right-section">
+          <p><span class="title">Sipariş Tarihi:</span> {{ order.orderDate | date:'dd.MM.yyyy' }}</p>
+          <p><span class="title">Sipariş Durumu:</span> {{ order.status }}</p>
+          <p><span class="title">Sipariş Fiyatı:</span> {{ 3 * order.quantity }} TL</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-toast position="bottom-right" />
+
+<!-- Modal Structure -->
+<div id="returnModal" class="modal hidden">
+  <div class="modal-content" *ngIf="selectedOrder">
+    <span class="close-button" (click)="closeModal()">&times;</span>
+    
+    <!-- Product Information -->
+    <div class="product-info">
+      <img [src]="'https://sellingthingsapi.shop/' + selectedOrder.product.photo1" alt="Product Image">
+      <div class="product-details">
+        <h3>{{ selectedOrder.product.name }}</h3>
+        <p>Fiyat: {{ selectedOrder.product.price }} TL</p>
+        <p>Adet: {{ selectedOrder.quantity }}</p>
+      </div>
+    </div>
+
+    <p>Lütfen iade etme sebebinizi giriniz:</p>
+    <textarea id="returnReason" rows="4" class="textarea"></textarea>
+
+    <!-- Buttons -->
+    <div class="modal-buttons">
+      <button class="cancel-button" (click)="closeModal()">Vazgeç</button>
+      <button class="confirm-button" (click)="submitReturn()">İadeyi Onayla</button>
+    </div>
+  </div>
+</div>
+

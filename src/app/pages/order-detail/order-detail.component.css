@@ -1,0 +1,76 @@
+/* Hide the default radio button */
+.hidden-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Style for the selectable blocks */
+.selectable {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border: 2px solid #d1d5db; /* Gray border initially */
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  background-color: #fff;
+}
+
+.selectable:hover {
+  background-color: #f0f0f0; /* Light gray background on hover */
+}
+
+.selectable.selected {
+  border-color: #000; /* Black border when selected */
+  background-color: #e0e0e0; /* Slightly darker background when selected */
+}
+
+/* Radio button icon */
+.radio-icon {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: background-color 0.3s;
+}
+/* order-detail.component.css */
+/* .sticky-section {
+  position: -webkit-sticky; /* Safari */
+  /* position: sticky;
+  top: 0; /* Üstten ne kadar uzaklıkta olacağı */
+  /* align-self: flex-start; /* Bu kısmı üstte tutar */
+/* } */
+/* .sticky-container {
+  align-self: flex-start;
+} */
+ /* Add this to your styles, either in a global CSS file or in the component styles */
+.sticky-section {
+  position: sticky;
+  top: 0; /* Adjusts the vertical position */
+  z-index: 10; /* Ensures it stays on top of other elements */
+  height: calc(100vh - 100px); /* Adjust based on your header or other fixed elements */
+  overflow-y: auto; /* Allows scrolling if content exceeds the height */
+}
+
+.selectable.selected .radio-icon {
+  border-color: #000; /* Black border when selected */
+  background-color: #000; /* Black background when selected */
+}
+.currency-symbol {
+  font-weight: bold; /* Kalınlaştır */
+  font-size: 1.25rem; /* Büyütme (örneğin 1.5rem) */
+}
+/* Additional styles for the label */
+.selectable label {
+  display: flex;
+  align-items: center;
+  margin-left: 40px; /* Adjust to make space for the radio button */
+  font-size: 1rem; /* Adjust font size as needed */
+}

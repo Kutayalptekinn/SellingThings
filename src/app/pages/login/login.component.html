@@ -1,0 +1,64 @@
+
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+  <p-toast position="bottom-right" />
+  <div class="bg-white p-10 rounded-lg shadow-lg w-full max-w-lg">
+    <h2 class="text-3xl font-bold mb-8 text-gray-800 text-center">Giriş Yap</h2>
+    <form (ngSubmit)="onLogin()">
+      <div class="mb-6">
+        <label class="block text-gray-700 text-lg font-bold mb-2" for="email">
+          Email
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="email"
+          type="email"
+          placeholder="Email"
+          [(ngModel)]="email"
+          name="email"
+        />
+      </div>
+      <div class="mb-8">
+        <label class="block text-gray-700 text-lg font-bold mb-2" for="password">
+          Şifre
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+          id="password"
+          type="password"
+          placeholder="************"
+          [(ngModel)]="password"
+          name="password"
+        />
+        <a href="/forgot-password" class="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800">Şifremi unuttum?</a>
+      </div>
+      <div class="flex items-center justify-between mb-6">
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+        >
+          Giriş Yap
+        </button>
+        <a href="/sign-in" class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
+          Kayıt Ol
+        </a>
+      </div>
+      <div *ngIf="errorMessage" class="text-red-500 text-center mt-4">
+        {{ errorMessage }}
+      </div>
+      <div class="text-center mt-6">
+        <p class="text-gray-700 text-lg mb-4">Bizi sosyal medyada takip edin:</p>
+        <div class="flex justify-center space-x-4">
+          <a href="https://www.instagram.com/hypervactr/" class="text-gray-600 hover:text-gray-800">
+            <i class="fab fa-instagram fa-2x"></i>
+          </a>
+          <a href="https://www.facebook.com" class="text-gray-600 hover:text-gray-800">
+            <i class="fab fa-facebook fa-2x"></i>
+          </a>
+          <a href="https://www.youtube.com" class="text-gray-600 hover:text-gray-800">
+            <i class="fab fa-youtube fa-2x"></i>
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
