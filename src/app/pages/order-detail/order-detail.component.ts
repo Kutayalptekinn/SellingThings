@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart/cart.service';
 import { UserService } from '../../services/user/user.service';
-import { RouterModule,Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MailService } from '../../services/mail/mail.service';
 import { OrderService } from '../../services/order/order.service';
-import { DomSanitizer,SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 interface OrderItem {
   product: any;
@@ -16,7 +16,7 @@ interface OrderItem {
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.css']
 })
@@ -28,12 +28,11 @@ export class OrderDetailComponent implements OnInit {
   total: number = 0;
   isModalOpen: boolean = false;
   isPaymentModalOpen: boolean = false;
-  isTouched: boolean = false; // Form alanlarının dokunulup dokunulmadığını kontrol eder
   paymentHtml: SafeHtml | undefined;
+
   // Form field variables
   userId!: number;
   userEmail: string = '';
-  country: string = '';
   firstName: string = '';
   lastName: string = '';
   address: string = '';
@@ -47,41 +46,42 @@ export class OrderDetailComponent implements OnInit {
   billingCity: string = '';
   billingPhone: string = '';
 
-  constructor(private cartService: CartService, private userService: UserService,private router: Router,
-    private mailService: MailService,private orderService: OrderService,private sanitizer: DomSanitizer
+  constructor(
+    private cartService: CartService,
+    private userService: UserService,
+    private router: Router,
+    private mailService: MailService,
+    private orderService: OrderService,
+    private sanitizer: DomSanitizer
   ) {}
 
   async ngOnInit() {
-    
+    this.loadUserDetails();
+    await this.loadOrderItems();
+  }
+
+  private loadUserDetails() {
     const user = this.userService.getUserDetails();
     if (user) {
-      this.userId=Number(user?.id);
+      this.userId = Number(user.id);
       this.userEmail = user.email;
       this.firstName = user.name || '';
       this.lastName = user.surname || '';
     }
-    this.loadOrderItems();
-
   }
-
   selectAddress(isSame: boolean) {
     this.sameAsShipping = isSame;
   }
-
-
-
-
-
-  async loadOrderItems() {
-    const cartItems = await this.cartService.fetchCartItems();
-    this.orderItems = cartItems.map((item: { product: any; quantity: any; }) => ({
-      product: item.product,
-      quantity: item.quantity
+  private async loadOrderItems() {
+    const cartItems: { product: any; quantity: number }[] = await this.cartService.fetchCartItems();
+    this.orderItems = cartItems.map((item: { product: any; quantity: number }) => ({
+        product: item.product,
+        quantity: item.quantity
     }));
     this.calculateTotals();
-  }
+}
 
-  calculateTotals() {
+  private calculateTotals() {
     this.subTotal = this.orderItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
     this.shippingCost = Math.floor(Math.random() * 100) + 10; // Random shipping cost
     this.total = this.subTotal + this.shippingCost;
@@ -92,78 +92,81 @@ export class OrderDetailComponent implements OnInit {
   }
 
   async confirmOrder() {
-    const user = this.userService.getUserDetails();
-    const orderNo=await this.cartService.createOrderFromCart(
-      this.userEmail,
-      this.firstName,
-      this.lastName,
-      this.address,
-      this.streetDetails,
-      this.postalCode,
-      this.city,
-      this.phone,
-      this.billingAddress,
-      this.billingStreetDetails,
-      this.billingPostalCode,
-      this.billingCity,
-      this.billingPhone,
-      this.sameAsShipping
-    );
-    this.mailService.orderConfirmation(this.userEmail,orderNo);
+    const orderDetails = {
+        userEmail: this.userEmail,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        address: this.address,
+        streetDetails: this.streetDetails,
+        postalCode: this.postalCode,
+        city: this.city,
+        phone: this.phone,
+        billingAddress: this.billingAddress,
+        billingStreetDetails: this.billingStreetDetails,
+        billingPostalCode: this.billingPostalCode,
+        billingCity: this.billingCity,
+        billingPhone: this.billingPhone,
+        sameAsShipping: this.sameAsShipping
+    };
 
-    if (user) {
-      this.cartService.clearCartFromUser();
+    // Call createOrderFromCart with the orderDetails object
+    const orderNo = await this.cartService.createOrderFromCart(orderDetails);
+
+    // Send order confirmation email
+    await this.mailService.orderConfirmation(this.userEmail, orderNo);
+
+    // Clear cart based on user authentication
+    if (this.userService.getUserDetails()) {
+        await this.cartService.clearCartFromUser();
     } else {
-      
-      this.cartService.clearCartFromLocal();
+        await this.cartService.clearCartFromLocal();
     }
+
+    // Get payment HTML and handle payment modal
     const iframeHtml = await this.orderService.getPaymentHtml();
     this.paymentHtml = this.sanitizer.bypassSecurityTrustHtml(iframeHtml);
-    //burada mail gönderme işlemini yap
     this.closeModal();
     this.openPaymentModal();
-    
+}
+goToProducts() {
+  this.router.navigate(['/product']);
+}
+validateForm(): boolean {
+  // Check if all required fields are filled
+  if (!this.firstName || !this.lastName || !this.address || !this.city || !this.phone || !this.userEmail) {
+    return false;
   }
-  goToProducts() {
-    this.router.navigate(['/product']);
-  }
-  validateForm(): boolean {
-    // Check if all required fields are filled
-    if (!this.firstName || !this.lastName || !this.address || !this.city || !this.phone || !this.userEmail) {
+  
+  if (!this.sameAsShipping) {
+    // Check billing address fields if not same as shipping
+    if (!this.billingAddress || !this.billingCity || !this.billingPhone) {
       return false;
     }
-    
-    if (!this.sameAsShipping) {
-      // Check billing address fields if not same as shipping
-      if (!this.billingAddress || !this.billingCity || !this.billingPhone) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
-  openModal() {
+  return true;
+}
+openModal() {
 
-    if (!this.validateForm()) {
-      return;
-    }
-    else{
-      this.isModalOpen = true;
-    }
+  if (!this.validateForm()) {
+    return;
   }
-
-  closeModal() {
-    this.isModalOpen = false;
+  else{
+    this.isModalOpen = true;
   }
+}
 
-  openPaymentModal() {
+closeModal() {
+  this.isModalOpen = false;
+}
+
+openPaymentModal() {
 
 
-      this.isPaymentModalOpen = true;
-  }
+    this.isPaymentModalOpen = true;
+}
 
-  closePaymentModal() {
-    this.isPaymentModalOpen = false;
-  }
+closePaymentModal() {
+  this.isPaymentModalOpen = false;
+}
 }

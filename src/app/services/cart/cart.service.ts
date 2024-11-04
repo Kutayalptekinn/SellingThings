@@ -56,10 +56,28 @@ export class CartService {
     this.cartItemsSource.next(cartItems);
   }
 
+  private getToken(): string | null {
+    return this.isBrowser ? localStorage.getItem('authToken') : null;
+  }
+
+  private getCartItemsFromLocalStorage(): CartItem[] {
+    if (this.isBrowser) {
+      const cartItems = localStorage.getItem('localCartItems');
+      return cartItems ? JSON.parse(cartItems) : [];
+    }
+    return [];
+  }
+
+  private setCartItemsToLocalStorage(cartItems: CartItem[]) {
+    if (this.isBrowser) {
+      localStorage.setItem('localCartItems', JSON.stringify(cartItems));
+    }
+  }
+
   async checkCartItem(productId: number, userId: number): Promise<any> {
-    const token = localStorage.getItem('authToken');
+    const token = this.getToken();
     try {
-      const response = await axios.get(`https://sellingthingsapi.shop/api/Cart/GetForUpdatedAsync`, {
+      const response = await axios.get('https://sellingthingsapi.shop/api/Cart/GetForUpdatedAsync', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -74,7 +92,7 @@ export class CartService {
   }
 
   async fetchCartItems() {
-    const token = localStorage.getItem('authToken');
+    const token = this.getToken();
     const user = this.userService.getUserDetails();
     if (!user) {
       const localCartItems = this.getCartItemsFromLocalStorage();
@@ -99,74 +117,83 @@ export class CartService {
   }
 
   async addToCart(product: any, quantity: number) {
-    const token = localStorage.getItem('authToken');
     const user = this.userService.getUserDetails();
-    if (user) {
-      const existingCartItem = await this.checkCartItem(product.id, Number(user?.id));
-      if (existingCartItem) {
-        existingCartItem.quantity += quantity;
-        const payload = {
-          id: existingCartItem.id,
-          userId: Number(user?.id),
-          productId: product.id,
-          quantity: existingCartItem.quantity
-        };
-        try {
-          const response = await axios.put('https://sellingthingsapi.shop/api/Cart/UpdateAsync', payload, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          this.fetchCartItems();
-          return response.data;
-        } catch (error) {
-          throw error;
+  
+    if (this.isBrowser) {
+      const token = this.getToken();
+  
+      if (user) {
+        const existingCartItem = await this.checkCartItem(product.id, Number(user.id));
+        if (existingCartItem) {
+          existingCartItem.quantity += quantity;
+          const payload = {
+            id: existingCartItem.id,
+            userId: Number(user.id),
+            productId: product.id,
+            quantity: existingCartItem.quantity
+          };
+          try {
+            const response = await axios.put('https://sellingthingsapi.shop/api/Cart/UpdateAsync', payload, {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            await this.fetchCartItems();
+            return response.data;
+          } catch (error) {
+            console.error('Error updating cart item:', error);
+            throw error;
+          }
+        } else {
+          const payload = {
+            id: 0,
+            userId: Number(user.id),
+            productId: product.id,
+            quantity: quantity
+          };
+          try {
+            const response = await axios.post('https://sellingthingsapi.shop/api/Cart/InsertAsync', payload, {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            await this.fetchCartItems();
+            return response.data;
+          } catch (error) {
+            console.error('Error adding cart item:', error);
+            throw error;
+          }
         }
       } else {
-        const payload = {
-          id: 0,
-          userId: Number(user?.id),
-          productId: product.id,
-          quantity: quantity
-        };
-        try {
-          const response = await axios.post('https://sellingthingsapi.shop/api/Cart/InsertAsync', payload, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          this.fetchCartItems();
-          return response.data;
-        } catch (error) {
-          throw error;
+        const cartItems = this.getCartItemsFromLocalStorage();
+        const existingCartItem = cartItems.find(item => item.productId === product.id);
+        if (existingCartItem) {
+          existingCartItem.quantity += quantity;
+        } else {
+          const cartItem: CartItem = {
+            id: 0,
+            productId: product.id,
+            quantity: quantity,
+            userId: null,
+            product: { ...product }
+          };
+          cartItems.push(cartItem);
         }
+        this.setCartItemsToLocalStorage(cartItems);
+        this.updateCartItems(cartItems);
       }
     } else {
-      const cartItems = this.getCartItemsFromLocalStorage();
-      const existingCartItem = cartItems.find(item => item.productId === product.id);
-      if (existingCartItem) {
-        existingCartItem.quantity += quantity;
-      } else {
-        const cartItem: CartItem = {
-          id: 0,
-          productId: product.id,
-          quantity: quantity,
-          userId: null,
-          product: { ...product }
-        };
-        cartItems.push(cartItem);
-      }
-      this.setCartItemsToLocalStorage(cartItems);
-      this.updateCartItems(cartItems);
+      console.warn('Attempt to add to cart outside of browser context.');
     }
   }
 
   async removeFromCart(id: number, index: number) {
-    const token = localStorage.getItem('authToken');
+    const token = this.getToken();
     const updatedCartItems = this.cartItemsSource.getValue();
     const user = this.userService.getUserDetails();
+
     if (user) {
       try {
         await axios.delete('https://sellingthingsapi.shop/api/Cart/DeleteAsync', {
@@ -189,89 +216,73 @@ export class CartService {
     }
   }
 
-  async createOrderFromCart(
-    userEmail: string,
-    firstName: string,
-    lastName: string,
-    address: string,
-    streetDetails: string,
-    postalCode: string,
-    city: string,
-    phone: string,
-    billingAddress: string,
-    billingStreetDetails: string,
-    billingPostalCode: string,
-    billingCity: string,
-    billingPhone: string,
-    sameAsShipping: boolean
-  ) {
-    const token = localStorage.getItem('authToken');
+  async createOrderFromCart(orderDetails: {
+    userEmail: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    streetDetails: string;
+    postalCode: string;
+    city: string;
+    phone: string;
+    billingAddress: string;
+    billingStreetDetails: string;
+    billingPostalCode: string;
+    billingCity: string;
+    billingPhone: string;
+    sameAsShipping: boolean;
+  }) {
+    const token = this.getToken();
     const cartItems = this.getCartItems();
     if (cartItems.length === 0) {
       throw new Error('Cart is empty');
-    } else {
-      const orderNo = this.generateRandomOrderNumber();
-      const user = this.userService.getUserDetails();
-      for (const item of cartItems) {
-        const newOrder: Order = {
-          id: 0,
-          userId: user ? Number(user.id) : null,
-          productId: item.productId,
-          quantity: item.quantity,
-          status: "Pending",
-          orderDate: new Date().toISOString(),
-          address: address,
-          strictDetails: streetDetails,
-          taxCode: postalCode,
-          city: city,
-          phoneNumber: phone,
-          addressForBilling: sameAsShipping ? address : billingAddress,
-          strictDetailsForBilling: sameAsShipping ? streetDetails : billingStreetDetails,
-          taxCodeForBilling: sameAsShipping ? postalCode : billingPostalCode,
-          cityForBilling: sameAsShipping ? city : billingCity,
-          phoneNumberForBilling: sameAsShipping ? phone : billingPhone,
-          name: firstName,
-          surname: lastName,
-          eMail: user?.email || userEmail,
-          orderNo: orderNo
-        };
-        try {
-          await axios.post('https://sellingthingsapi.shop/api/Order/InsertAsync', newOrder, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          return orderNo;
-        } catch (error) {
-          console.error('API Error:', error);
-          throw error;
-        }
+    }
+
+    const orderNo = this.generateRandomOrderNumber();
+    const user = this.userService.getUserDetails();
+
+    for (const item of cartItems) {
+      const newOrder: Order = {
+        id: 0,
+        userId: user ? Number(user.id) : null,
+        productId: item.productId,
+        quantity: item.quantity,
+        status: "Pending",
+        orderDate: new Date().toISOString(),
+        address: orderDetails.address,
+        strictDetails: orderDetails.streetDetails,
+        taxCode: orderDetails.postalCode,
+        city: orderDetails.city,
+        phoneNumber: orderDetails.phone,
+        addressForBilling: orderDetails.sameAsShipping ? orderDetails.address : orderDetails.billingAddress,
+        strictDetailsForBilling: orderDetails.sameAsShipping ? orderDetails.streetDetails : orderDetails.billingStreetDetails,
+        taxCodeForBilling: orderDetails.sameAsShipping ? orderDetails.postalCode : orderDetails.billingPostalCode,
+        cityForBilling: orderDetails.sameAsShipping ? orderDetails.city : orderDetails.billingCity,
+        phoneNumberForBilling: orderDetails.sameAsShipping ? orderDetails.phone : orderDetails.billingPhone,
+        name: orderDetails.firstName,
+        surname: orderDetails.lastName,
+        eMail: user?.email || orderDetails.userEmail,
+        orderNo: orderNo
+      };
+
+      try {
+        await axios.post('https://sellingthingsapi.shop/api/Order/InsertAsync', newOrder, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
       }
     }
-    return 0;
-  }
 
-  private getCartItemsFromLocalStorage(): CartItem[] {
-    if (this.isBrowser) {
-      const cartItems = localStorage.getItem('localCartItems');
-      return cartItems ? JSON.parse(cartItems) : [];
-    }
-    return [];
-  }
-
-  private setCartItemsToLocalStorage(cartItems: CartItem[]) {
-    if (this.isBrowser) {
-      localStorage.setItem('localCartItems', JSON.stringify(cartItems));
-    }
+    return orderNo;
   }
 
   getTotalQuantity(): number {
-    let total = 0;
-    this.cartItemsSource.getValue().forEach(item => {
-      total += item.quantity;
-    });
-    return total;
+    return this.cartItemsSource.getValue().reduce((total, item) => total + item.quantity, 0);
   }
 
   getCartItems(): CartItem[] {
