@@ -26,6 +26,9 @@ export class OrderDetailComponent implements OnInit {
   subTotal: number = 0;
   shippingCost: number = 0;
   total: number = 0;
+  country: string = '';
+  isTouched: boolean = false; // Form alanlarının dokunulup dokunulmadığını kontrol eder
+
   isModalOpen: boolean = false;
   isPaymentModalOpen: boolean = false;
   paymentHtml: SafeHtml | undefined;
