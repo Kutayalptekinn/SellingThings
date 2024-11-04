@@ -1,0 +1,56 @@
+.icon-button {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  .icon-button:focus {
+    outline: none;
+  }
+  .price-text {
+    font-size: 2rem;
+  }
+  .carousel {
+    position: relative;
+    overflow: hidden;
+  }
+  .carousel img {
+    transition: opacity 0.5s ease-in-out;
+  }
+  .carousel img.hidden {
+    opacity: 0;
+  }
+  .carousel-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+  }
+  .carousel-controls button {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .star-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .star {
+    color: gray;
+  }
+  
+  .star-filled {
+    color: gold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: width 0.2s ease;
+  }
+  
