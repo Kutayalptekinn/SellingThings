@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common'; // Ensure CommonModule is import
   styleUrl: './about.component.css'
 })
 export class AboutComponent {
-  svgPath = 'src/assets/idea.svg';
+  svgPath = 'src/SellingThings/assets/idea.svg';
 
   // SVG div'inin stilini dinamik olarak ayarlamak için bir nesne oluşturun
  svgStyle = {
